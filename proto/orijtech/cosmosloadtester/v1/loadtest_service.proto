@@ -37,8 +37,6 @@ message RunLoadtestRequest {
   // The maximum number of transactions to send - set to -1 to turn off this limit.
   // Maps to --count in tm-load-test.
   int32 transaction_count = 7;
-  // The broadcast_tx method to use when submitting transactions - can be async, sync or commit.
-  // Maps to --broadcast-tx-method in tm-load-test.
   enum BroadcastTxMethod {
     // Default value. This value is unused.
     BROADCAST_TX_METHOD_UNSPECIFIED = 0;
@@ -46,7 +44,9 @@ message RunLoadtestRequest {
     BROADCAST_TX_METHOD_ASYNC = 2;
     BROADCAST_TX_METHOD_COMMIT = 3;
   }
-  string broadcast_tx_method = 8;
+  // The broadcast_tx method to use when submitting transactions - can be async, sync or commit.
+  // Maps to --broadcast-tx-method in tm-load-test.
+  BroadcastTxMethod broadcast_tx_method = 8;
   // A comma-separated list of URLs indicating Tendermint WebSockets RPC endpoints to which to connect.
   // Maps to --endpoints in tm-load-test.
   repeated string endpoints = 9;
@@ -83,17 +83,17 @@ message RunLoadtestRequest {
 message RunLoadtestResponse {
   // The total number of transactions sent.
   // Corresponds to total_time in tm-load-test.
-  int32 total_txs = 1;
+  int64 total_txs = 1;
   // The total time taken to send `total_txs` transactions.
   // Corresponds to total_txs in tm-load-test.
   google.protobuf.Duration total_time = 2;
   // The cumulative number of bytes sent as transactions.
   // Corresponds to total_bytes in tm-load-test.
-  int32 total_bytes = 3;
+  int64 total_bytes = 3;
   // The rate at which transactions were submitted (tx/sec).
   // Corresponds to avg_tx_rate in tm-load-test.
-  int32 avg_txs_per_second = 4;
+  double avg_txs_per_second = 4;
   // The rate at which data was transmitted in transactions (bytes/sec).
   // Corresponds to avg_data_rate in tm-load-test.
-  int32 avg_bytes_per_second = 5;
+  double avg_bytes_per_second = 5;
 }

@@ -10,6 +10,16 @@
  */
 
 /**
+ *  - BROADCAST_TX_METHOD_UNSPECIFIED: Default value. This value is unused.
+ */
+export enum RunLoadtestRequestBroadcastTxMethod {
+  BROADCAST_TX_METHOD_UNSPECIFIED = "BROADCAST_TX_METHOD_UNSPECIFIED",
+  BROADCAST_TX_METHOD_SYNC = "BROADCAST_TX_METHOD_SYNC",
+  BROADCAST_TX_METHOD_ASYNC = "BROADCAST_TX_METHOD_ASYNC",
+  BROADCAST_TX_METHOD_COMMIT = "BROADCAST_TX_METHOD_COMMIT",
+}
+
+/**
 *  - ENDPOINT_SELECT_METHOD_UNSPECIFIED: Default value. This value is unused.
  - ENDPOINT_SELECT_METHOD_SUPPLIED: Select only the supplied endpoint(s) for load testing (the default).
  - ENDPOINT_SELECT_METHOD_DISCOVERED: Select newly discovered endpoints only (excluding supplied endpoints).
@@ -79,7 +89,12 @@ export interface V1RunLoadtestRequest {
    * @format int32
    */
   transactionCount?: number;
-  broadcastTxMethod?: string;
+
+  /**
+   * The broadcast_tx method to use when submitting transactions - can be async, sync or commit.
+   * Maps to --broadcast-tx-method in tm-load-test.
+   */
+  broadcastTxMethod?: RunLoadtestRequestBroadcastTxMethod;
 
   /**
    * A comma-separated list of URLs indicating Tendermint WebSockets RPC endpoints to which to connect.
@@ -131,9 +146,9 @@ export interface V1RunLoadtestResponse {
   /**
    * The total number of transactions sent.
    * Corresponds to total_time in tm-load-test.
-   * @format int32
+   * @format int64
    */
-  totalTxs?: number;
+  totalTxs?: string;
 
   /**
    * The total time taken to send `total_txs` transactions.
@@ -144,21 +159,21 @@ export interface V1RunLoadtestResponse {
   /**
    * The cumulative number of bytes sent as transactions.
    * Corresponds to total_bytes in tm-load-test.
-   * @format int32
+   * @format int64
    */
-  totalBytes?: number;
+  totalBytes?: string;
 
   /**
    * The rate at which transactions were submitted (tx/sec).
    * Corresponds to avg_tx_rate in tm-load-test.
-   * @format int32
+   * @format double
    */
   avgTxsPerSecond?: number;
 
   /**
    * The rate at which data was transmitted in transactions (bytes/sec).
    * Corresponds to avg_data_rate in tm-load-test.
-   * @format int32
+   * @format double
    */
   avgBytesPerSecond?: number;
 }
