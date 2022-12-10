@@ -146,5 +146,5 @@ func mapEndpointSelectMethod(m loadtestpb.RunLoadtestRequest_EndpointSelectMetho
 	case loadtestpb.RunLoadtestRequest_ENDPOINT_SELECT_METHOD_SUPPLIED:
 		return "commit", nil
 	}
-	return "", fmt.Errorf("unsupported broadcast_tx_method: %v", m)
+	return "", fmt.Errorf("unsupported endpoint_select_method: %v", m)
 }

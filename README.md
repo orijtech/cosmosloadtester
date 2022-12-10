@@ -8,15 +8,15 @@ make ui
 ```
 
 2. Build the server:
-```
+```shell
 make server
 ```
 
 3. Run the server:
-```
+```shell
 ./bin/server --port=8080
 ```
-4. The server should be available at https://localhost:8080
+4. The server should be available at http://localhost:8080
 
 
 ## Registering custom client factories
