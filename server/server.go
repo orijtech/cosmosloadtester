@@ -76,6 +76,7 @@ func (s *Server) RunLoadtest(ctx context.Context, req *loadtestpb.RunLoadtestReq
 	if err != nil {
 		return nil, fmt.Errorf("failed to open stats output file: %w", err)
 	}
+	defer f.Close()
 	csvR := csv.NewReader(f)
 	records, err := csvR.ReadAll()
 	if err != nil {
