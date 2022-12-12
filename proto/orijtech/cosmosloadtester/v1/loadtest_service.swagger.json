@@ -50,6 +50,17 @@
     }
   },
   "definitions": {
+    "RunLoadtestRequestBroadcastTxMethod": {
+      "type": "string",
+      "enum": [
+        "BROADCAST_TX_METHOD_UNSPECIFIED",
+        "BROADCAST_TX_METHOD_SYNC",
+        "BROADCAST_TX_METHOD_ASYNC",
+        "BROADCAST_TX_METHOD_COMMIT"
+      ],
+      "default": "BROADCAST_TX_METHOD_UNSPECIFIED",
+      "description": " - BROADCAST_TX_METHOD_UNSPECIFIED: Default value. This value is unused."
+    },
     "RunLoadtestRequestEndpointSelectMethod": {
       "type": "string",
       "enum": [
@@ -124,7 +135,8 @@
           "description": "The maximum number of transactions to send - set to -1 to turn off this limit.\nMaps to --count in tm-load-test."
         },
         "broadcastTxMethod": {
-          "type": "string"
+          "$ref": "#/definitions/RunLoadtestRequestBroadcastTxMethod",
+          "description": "The broadcast_tx method to use when submitting transactions - can be async, sync or commit.\nMaps to --broadcast-tx-method in tm-load-test."
         },
         "endpoints": {
           "type": "array",
@@ -166,8 +178,8 @@
       "type": "object",
       "properties": {
         "totalTxs": {
-          "type": "integer",
-          "format": "int32",
+          "type": "string",
+          "format": "int64",
           "description": "The total number of transactions sent.\nCorresponds to total_time in tm-load-test."
         },
         "totalTime": {
@@ -175,18 +187,18 @@
           "description": "The total time taken to send `total_txs` transactions.\nCorresponds to total_txs in tm-load-test."
         },
         "totalBytes": {
-          "type": "integer",
-          "format": "int32",
+          "type": "string",
+          "format": "int64",
           "description": "The cumulative number of bytes sent as transactions.\nCorresponds to total_bytes in tm-load-test."
         },
         "avgTxsPerSecond": {
-          "type": "integer",
-          "format": "int32",
+          "type": "number",
+          "format": "double",
           "description": "The rate at which transactions were submitted (tx/sec).\nCorresponds to avg_tx_rate in tm-load-test."
         },
         "avgBytesPerSecond": {
-          "type": "integer",
-          "format": "int32",
+          "type": "number",
+          "format": "double",
           "description": "The rate at which data was transmitted in transactions (bytes/sec).\nCorresponds to avg_data_rate in tm-load-test."
         }
       }
