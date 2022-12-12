@@ -46,6 +46,7 @@ func main() {
 	if err != nil {
 		logrus.Fatalln("Failed to listen:", err)
 	}
+	defer lis.Close()
 	grpcS := grpc.NewServer(
 		grpc.StatsHandler(&ocgrpc.ServerHandler{}),
 	)
@@ -67,6 +68,7 @@ func main() {
 	if err != nil {
 		logrus.Fatalln("Failed to dial server:", err)
 	}
+	defer conn.Close()
 
 	// Configure mux for the gRPC-Gateway API and UI.
 	gwmux := runtime.NewServeMux()
