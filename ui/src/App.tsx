@@ -25,7 +25,7 @@ export default function App() {
       <Box
         component="main"
         sx={{
-          bgcolor: ({ palette: p }) => p.mode === 'dark' ? p.grey[800] : p.grey[50],
+          bgcolor: ({ palette: p }) => p.mode === 'dark' ? p.grey[800] : p.grey[300],
           height: '100vh',
           width: '100%',
           overflow: 'auto',

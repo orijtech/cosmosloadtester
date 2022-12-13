@@ -3,8 +3,8 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
-// import axios from 'axios';
 
+import { V1RunLoadtestResponse as LoadTestResult } from 'src/gen/LoadtestApi';
 import Inputs from 'src/components/inputs/Inputs';
 import Outputs from 'src/components/output/Outputs';
 import { fields } from './Fields';
@@ -12,18 +12,20 @@ import { fields } from './Fields';
 export default function LoadTester() {
     const [running, setRunning] = React.useState(false);
     const [error, setError] = React.useState('');
+    const [data, setData] = React.useState<LoadTestResult>();
+    
     const submitRef = React.useRef<HTMLButtonElement>(null);
 
     const onFormSubmit = async (data: any) => {
         try {
+            setData(undefined);
             setRunning(true);
-            // make an axios request to server in same host and set the received data.
-            const d = await new Promise((resolve) => {
+            await new Promise((resolve) => {
                 setTimeout(() => {
                     resolve(data);
+                    setData(data as LoadTestResult);
                 }, 2000);
             });
-            console.log({ data: d });
         } catch (e: any) {
             setError(e.message);
         } finally {
@@ -33,7 +35,7 @@ export default function LoadTester() {
 
     return (
         <Paper elevation={0} sx={{ mt: 3, p: 3 }}>
-            <Alert severity='info' sx={{ mb: 3 }}>
+            <Alert severity='info' sx={{ mb: 3 }} variant='standard'>
                 <Typography variant="caption">
                     Enter TM Parameters
                 </Typography>
@@ -53,13 +55,21 @@ export default function LoadTester() {
             >
                 {running ? 'Running load testing...' : 'Run load testing'}
             </Button>
-            <Alert severity='success' sx={{ my: 3 }}>
-                <Typography variant='caption'>
-                    Load Testing Results
-                </Typography>
-            </Alert>
+
+            {/* display errors if any occured */}
             {error !== '' && <Typography variant='caption'>{error}</Typography>}
-            <Outputs />
+            {/* render data if it exists */}
+            {
+            data !== undefined &&
+            <>
+                <Alert severity='success' sx={{ my: 3 }}>
+                    <Typography variant='caption'>
+                        Load Testing Results
+                    </Typography>
+                </Alert>
+                <Outputs data={data} />
+            </>
+            }
         </Paper>
-    )
+    );
 }

@@ -2,6 +2,8 @@ import { useForm, Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 
 export enum FieldType {
     VALUE_BASED = 'value-based-field',
@@ -13,10 +15,11 @@ export enum FieldType {
 export type FormField = {
     name: string;
     label: string;
-    default?: string|number;
+    default?: string | number;
     info?: string;
     fieldType: FieldType,
     keys?: string[],
+    required?: string | boolean;
     options?: { name: string, value: string, info?: string }[],
 };
 
@@ -34,11 +37,20 @@ export default function Inputs(props: Props) {
     } = props;
 
     const defaultValues: { [key: string]: any } = fields
-        .filter(p => p.default != null)
-        .reduce((prev, next) => ({ ...prev, [next.name]: next.default }), {});
-    
+        /**
+         * Cannot apply undefined to defaultValue or defaultValues at useForm
+         * Keeping a default value as undefined would cause an error from React
+         * about turning an uncontrolled input to a controlled input
+         * @see https://react-hook-form.com/api/usecontroller/controller 
+         */
+        .reduce((prev, next) => ({
+            ...prev,
+            [next.name]: next.default || '',
+        }), {});
+
     const { control, handleSubmit } = useForm({ defaultValues });
-    const onSubmit = (data: any) => {
+
+    const onSubmit = (data: any) => {        
         handleFormSubmission?.(data);
     };
 
@@ -51,15 +63,40 @@ export default function Inputs(props: Props) {
                             <Controller
                                 name={f.name}
                                 control={control}
-                                render={({ field }) => 
-                                    <TextField
-                                        variant='outlined' 
-                                        label={f.label}
-                                        size='small'
-                                        helperText={f.info}
-                                        {...field}
-                                    />
-                                }
+                                rules={{ required: f.required }}
+                                render={({ field, fieldState: { error } }) => {
+                                    if (f.fieldType === FieldType.SINGLE_SELECTION_BASED) {
+                                        return (
+                                            <TextField
+                                                select={true}
+                                                variant='outlined'
+                                                label={f.label}
+                                                size='small'
+                                                error={error !== undefined}
+                                                helperText={error !== undefined ? error.message : f.info}
+                                                {...field}
+                                            >
+                                                {f.options?.map((p) =>
+                                                    <MenuItem value={p.value} key={p.value}>
+                                                        <Typography variant='caption'>
+                                                            {p.name}
+                                                        </Typography>
+                                                    </MenuItem>
+                                                )}
+                                            </TextField>
+                                        )
+                                    }
+                                    return (
+                                        <TextField
+                                            variant='outlined'
+                                            label={f.label}
+                                            size='small'
+                                            error={error !== undefined}
+                                            helperText={error !== undefined ? error.message : f.info}
+                                            {...field}
+                                        />
+                                    )
+                                }}
                             />
                         </Grid>
                     );
