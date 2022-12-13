@@ -160,7 +160,7 @@ type RunLoadtestRequest struct {
 	// The broadcast_tx method to use when submitting transactions - can be async, sync or commit.
 	// Maps to --broadcast-tx-method in tm-load-test.
 	BroadcastTxMethod RunLoadtestRequest_BroadcastTxMethod `protobuf:"varint,8,opt,name=broadcast_tx_method,json=broadcastTxMethod,proto3,enum=orijtech.cosmosloadtester.v1.RunLoadtestRequest_BroadcastTxMethod" json:"broadcast_tx_method,omitempty"`
-	// A comma-separated list of URLs indicating Tendermint WebSockets RPC endpoints to which to connect.
+	// A list of URLs indicating Tendermint WebSockets RPC endpoints to which to connect.
 	// Maps to --endpoints in tm-load-test.
 	Endpoints []string `protobuf:"bytes,9,rep,name=endpoints,proto3" json:"endpoints,omitempty"`
 	// The method by which to select endpoints.
