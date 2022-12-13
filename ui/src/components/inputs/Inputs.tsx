@@ -3,24 +3,41 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
-interface Props {
-    handleFormSubmission: Function;
-    defaultValues?: { [key: string]: any };
-    fields: {
-        name: string;
-        label: string;
-        info?: string;
-        default?: any;
-    }[];
+export enum FieldType {
+    VALUE_BASED = 'value-based-field',
+    LIST_BASED = 'list-based-field',
+    OBJECT_BASED = 'object-based-field',
+    SINGLE_SELECTION_BASED = 'single-selection-field',
 };
 
+export type FormField = {
+    name: string;
+    label: string;
+    default?: string|number;
+    info?: string;
+    fieldType: FieldType,
+    keys?: string[],
+    options?: { name: string, value: string, info?: string }[],
+};
+
+interface Props {
+    handleFormSubmission: Function;
+    fields: FormField[];
+    submitRef: React.Ref<HTMLButtonElement>;
+};
 
 export default function Inputs(props: Props) {
-    const { handleFormSubmission, defaultValues, fields } = props;
-    const { control, handleSubmit } = useForm({
-        defaultValues,
-    });
+    const {
+        handleFormSubmission,
+        fields,
+        submitRef,
+    } = props;
 
+    const defaultValues: { [key: string]: any } = fields
+        .filter(p => p.default != null)
+        .reduce((prev, next) => ({ ...prev, [next.name]: next.default }), {});
+    
+    const { control, handleSubmit } = useForm({ defaultValues });
     const onSubmit = (data: any) => {
         handleFormSubmission?.(data);
     };
@@ -39,7 +56,6 @@ export default function Inputs(props: Props) {
                                         variant='outlined' 
                                         label={f.label}
                                         size='small'
-                                        defaultValue={f.default}
                                         helperText={f.info}
                                         {...field}
                                     />
@@ -51,13 +67,9 @@ export default function Inputs(props: Props) {
             </Grid>
             <Button
                 type="submit"
-                variant='contained'
-                color='inherit'
-                disableElevation
-                sx={{ textTransform: 'none' }}
-            >
-                Run
-            </Button>
+                ref={submitRef}
+                sx={{ display: 'none' }}
+            />
         </form>
-    )
+    );
 }
