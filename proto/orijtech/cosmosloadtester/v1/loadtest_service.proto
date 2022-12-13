@@ -47,7 +47,7 @@ message RunLoadtestRequest {
   // The broadcast_tx method to use when submitting transactions - can be async, sync or commit.
   // Maps to --broadcast-tx-method in tm-load-test.
   BroadcastTxMethod broadcast_tx_method = 8;
-  // A comma-separated list of URLs indicating Tendermint WebSockets RPC endpoints to which to connect.
+  // A list of URLs indicating Tendermint WebSockets RPC endpoints to which to connect.
   // Maps to --endpoints in tm-load-test.
   repeated string endpoints = 9;
   enum EndpointSelectMethod {

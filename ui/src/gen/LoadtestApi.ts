@@ -97,7 +97,7 @@ export interface V1RunLoadtestRequest {
   broadcastTxMethod?: RunLoadtestRequestBroadcastTxMethod;
 
   /**
-   * A comma-separated list of URLs indicating Tendermint WebSockets RPC endpoints to which to connect.
+   * A list of URLs indicating Tendermint WebSockets RPC endpoints to which to connect.
    * Maps to --endpoints in tm-load-test.
    */
   endpoints?: string[];
