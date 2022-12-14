@@ -12,6 +12,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/informalsystems/tm-load-test/pkg/loadtest"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -86,10 +87,18 @@ func main() {
 	if err != nil {
 		logrus.Fatalln("Failed to register static content with gateway: ", err)
 	}
+	wrappedGrpc := grpcweb.WrapServer(grpcS)
+	wrappedHandler := http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if wrappedGrpc.IsGrpcWebRequest(req) {
+			wrappedGrpc.ServeHTTP(res, req)
+			return
+		}
+		gwmux.ServeHTTP(res, req)
+	})
 
 	gwServer := &http.Server{
 		Addr:    fmt.Sprintf(":%d", *port),
-		Handler: gwmux,
+		Handler: wrappedHandler,
 	}
 	logrus.Infof("Serving gRPC-Gateway on http://%s", gwServer.Addr)
 	logrus.Fatalln(gwServer.ListenAndServe())
