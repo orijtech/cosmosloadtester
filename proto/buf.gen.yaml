@@ -12,9 +12,3 @@ plugins:
   - name: openapiv2
     out: .
     opt: 
-  - name: js
-    out: ../ui/src/gen
-    opt: import_style=commonjs
-  - name: grpc-web
-    out: ../ui/src/gen
-    opt: import_style=typescript,mode=grpcwebtext
