@@ -50,8 +50,8 @@ export default function LoadTester() {
                 .setStatsOutputFilePath(data.statsOutputFilePath)
                 .setTransactionCount(data.transactionCount)
                 .setTransactionSizeBytes(data.transactionSizeBytes)
-                .setTransactionsPerSecond(data.transactionsPerSecond);
-
+                .setTransactionsPerSecond(data.transactionsPerSecond)
+                .setConnectionCount(data.connectionCount);
             const result = await service.runLoadtest(request, null);
             setData(result.toObject());
             console.log(result.toObject());
