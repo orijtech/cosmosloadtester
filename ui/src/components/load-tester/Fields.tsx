@@ -1,9 +1,9 @@
 import { FieldType, FormField } from 'src/components/inputs/Inputs';
 
-import {
-    RunLoadtestRequestBroadcastTxMethod as BroadcastMethod,
-    RunLoadtestRequestEndpointSelectMethod as SelectMethod,
-} from 'src/gen/LoadtestApi';
+import { RunLoadtestRequest } from 'src/gen/orijtech/cosmosloadtester/v1/loadtest_service_pb';
+
+const BroadcastTxMethod = RunLoadtestRequest.BroadcastTxMethod;
+const SelectMethod = RunLoadtestRequest.EndpointSelectMethod;
 
 export const fields: FormField[] = [
     {
@@ -11,11 +11,11 @@ export const fields: FormField[] = [
         label: 'Broadcast TX Method',
         info: 'The broadcast tx method to use when submitting transactions, can be async, sync, or commit',
         fieldType: FieldType.SINGLE_SELECTION_BASED,
-        default: BroadcastMethod.BROADCAST_TX_METHOD_ASYNC,
+        default: BroadcastTxMethod.BROADCAST_TX_METHOD_ASYNC,
         options: [
-            { name: 'Async', value: BroadcastMethod.BROADCAST_TX_METHOD_ASYNC },
-            { name: 'Sync', value: BroadcastMethod.BROADCAST_TX_METHOD_SYNC },
-            { name: 'Commit', value: BroadcastMethod.BROADCAST_TX_METHOD_COMMIT },
+            { name: 'Async', value: BroadcastTxMethod.BROADCAST_TX_METHOD_ASYNC },
+            { name: 'Sync', value: BroadcastTxMethod.BROADCAST_TX_METHOD_SYNC },
+            { name: 'Commit', value: BroadcastTxMethod.BROADCAST_TX_METHOD_COMMIT },
         ],
     },
     {
@@ -34,6 +34,7 @@ export const fields: FormField[] = [
         name: 'clientFactory',
         required: 'Client factory field is required.',
         label: 'Client factory',
+        default: 'test-cosmos-client-factory',
         info: 'The identifier of the client factory to use for generating load testing transactions. Maps to --client-factory in tm-load-test',
         fieldType: FieldType.VALUE_BASED,
     },
@@ -42,7 +43,8 @@ export const fields: FormField[] = [
         label: 'Duration',
         info: 'The duration (in seconds) for which to handle the load test. Maps to --time in tm-load-test.',
         required: 'Duration to handle load test is required',
-        fieldType: FieldType.VALUE_BASED,
+        default: 20,
+        fieldType: FieldType.TIME_BASED,
     },
     {
         name: 'endpoints',
@@ -69,15 +71,15 @@ export const fields: FormField[] = [
         name: 'peerConnectTimeout',
         label: 'Peer connect timeout',
         info: 'The number of seconds to wait for all required peers to connect if expect-peers > 0. Maps to --peer-connect-timeout in tm-load-test.',
-        default: 2,
-        fieldType: FieldType.VALUE_BASED,
+        default: 20,
+        fieldType: FieldType.TIME_BASED,
     },
     {
         name: 'sendPeriod',
         label: 'Send period',
         info: 'The period (in seconds) at which to send batches of transactions. Maps to --send-period in tm-load-test.',
-        default: 1,
-        fieldType: FieldType.VALUE_BASED,
+        default: 20,
+        fieldType: FieldType.TIME_BASED,
     },
     {
         name: 'connectionCount',

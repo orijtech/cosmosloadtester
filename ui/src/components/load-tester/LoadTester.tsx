@@ -4,29 +4,59 @@ import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 
-import { V1RunLoadtestResponse as LoadTestResult } from 'src/gen/LoadtestApi';
+import {
+    LoadtestServiceClient,
+} from 'src/gen/orijtech/cosmosloadtester/v1/Loadtest_serviceServiceClientPb';
+import {
+    RunLoadtestRequest,
+    RunLoadtestResponse,
+} from 'src/gen/orijtech/cosmosloadtester/v1/loadtest_service_pb';
+
+import * as timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
+
 import Inputs from 'src/components/inputs/Inputs';
 import Outputs from 'src/components/output/Outputs';
 import { fields } from './Fields';
 
+const service = new LoadtestServiceClient('');
+
 export default function LoadTester() {
     const [running, setRunning] = React.useState(false);
     const [error, setError] = React.useState('');
-    const [data, setData] = React.useState<LoadTestResult>();
-    
+    const [data, setData] = React.useState<RunLoadtestResponse.AsObject>();
+
     const submitRef = React.useRef<HTMLButtonElement>(null);
 
     const onFormSubmit = async (data: any) => {
         try {
+            // reset previous response & error after new form submission
             setData(undefined);
+            setError('');
+            
             setRunning(true);
-            await new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve(data);
-                    setData(data as LoadTestResult);
-                }, 2000);
-            });
+            const endpoints: string[] = data.endpoints?.split(',') || [];
+            const request = new RunLoadtestRequest();
+            request
+                .setBroadcastTxMethod(data.broadcastTxMethod)
+                .setClientFactory(data.clientFactory)
+                .setDuration(new timestamp_pb.Timestamp().setSeconds(data.duration))
+                .setEndpointSelectMethod(data.endpointSelectMethod)
+                .setEndpointsList(endpoints)
+                .setExpectPeersCount(data.expectPeersCount)
+                .setMaxEndpointCount(data.maxEndpointCount)
+                .setMinPeerConnectivityCount(data.minPeerConnectivityCount)
+                .setPeerConnectTimeout(new timestamp_pb.Timestamp().setSeconds(data.peerConnectTimeout))
+                .setSendPeriod(new timestamp_pb.Timestamp().setSeconds(data.sendPeriod))
+                .setStatsOutputFilePath(data.statsOutputFilePath)
+                .setTransactionCount(data.transactionCount)
+                .setTransactionSizeBytes(data.transactionSizeBytes)
+                .setTransactionsPerSecond(data.transactionsPerSecond);
+
+            const result = await service.runLoadtest(request, null);
+            setData(result.toObject());
+            console.log(result.toObject());
         } catch (e: any) {
+            console.log(e);
             setError(e.message);
         } finally {
             setRunning(false);
@@ -57,18 +87,18 @@ export default function LoadTester() {
             </Button>
 
             {/* display errors if any occured */}
-            {error !== '' && <Typography variant='caption'>{error}</Typography>}
+            {error !== '' && <Typography component='h6' variant='caption'>{error}</Typography>}
             {/* render data if it exists */}
             {
-            data !== undefined &&
-            <>
-                <Alert severity='success' sx={{ my: 3 }}>
-                    <Typography variant='caption'>
-                        Load Testing Results
-                    </Typography>
-                </Alert>
-                <Outputs data={data} />
-            </>
+                data !== undefined &&
+                <>
+                    <Alert severity='success' sx={{ my: 3 }}>
+                        <Typography variant='caption'>
+                            Load Testing Results
+                        </Typography>
+                    </Alert>
+                    <Outputs data={data} />
+                </>
             }
         </Paper>
     );

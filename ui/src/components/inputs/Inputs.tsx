@@ -10,6 +10,7 @@ export enum FieldType {
     LIST_BASED = 'list-based-field',
     OBJECT_BASED = 'object-based-field',
     SINGLE_SELECTION_BASED = 'single-selection-field',
+    TIME_BASED = 'time-based-field' // append 's' to the output representing duration in  seconds
 };
 
 export type FormField = {
@@ -20,7 +21,7 @@ export type FormField = {
     fieldType: FieldType,
     keys?: string[],
     required?: string | boolean;
-    options?: { name: string, value: string, info?: string }[],
+    options?: { name: string, value: string|number, info?: string }[],
 };
 
 interface Props {
@@ -50,7 +51,7 @@ export default function Inputs(props: Props) {
 
     const { control, handleSubmit } = useForm({ defaultValues });
 
-    const onSubmit = (data: any) => {        
+    const onSubmit = (data: any) => {
         handleFormSubmission?.(data);
     };
 
@@ -64,7 +65,20 @@ export default function Inputs(props: Props) {
                                 name={f.name}
                                 control={control}
                                 rules={{ required: f.required }}
-                                render={({ field, fieldState: { error } }) => {
+                                render={({ field, fieldState: { error } }) => { 
+                                    if (f.fieldType === FieldType.TIME_BASED) {
+                                        return (
+                                            <TextField
+                                                variant='outlined'
+                                                label={f.label}
+                                                size='small'
+                                                type='number'
+                                                error={error !== undefined}
+                                                helperText={error !== undefined ? error.message : f.info}
+                                                {...field}
+                                            />
+                                        );
+                                    }                                   
                                     if (f.fieldType === FieldType.SINGLE_SELECTION_BASED) {
                                         return (
                                             <TextField
@@ -84,7 +98,7 @@ export default function Inputs(props: Props) {
                                                     </MenuItem>
                                                 )}
                                             </TextField>
-                                        )
+                                        );
                                     }
                                     return (
                                         <TextField
@@ -95,7 +109,7 @@ export default function Inputs(props: Props) {
                                             helperText={error !== undefined ? error.message : f.info}
                                             {...field}
                                         />
-                                    )
+                                    );
                                 }}
                             />
                         </Grid>
