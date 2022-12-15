@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/informalsystems/tm-load-test/pkg/loadtest"
 	loadtestpb "github.com/orijtech/cosmosloadtester/proto/orijtech/cosmosloadtester/v1"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -34,7 +37,7 @@ func (s *Server) RunLoadtest(ctx context.Context, req *loadtestpb.RunLoadtestReq
 	}
 
 	statsOutputFilePath := req.StatsOutputFilePath
-	if statsOutputFilePath == "" {
+	if strings.TrimSpace(statsOutputFilePath) == "" {
 		tmpFile, err := os.CreateTemp("", "tm-load-test-output.txt")
 		if err != nil {
 			return nil, fmt.Errorf("failed to create temporary file for stats output: %w", err)
@@ -50,7 +53,7 @@ func (s *Server) RunLoadtest(ctx context.Context, req *loadtestpb.RunLoadtestReq
 		statsOutputFilePath = tmpFile.Name()
 	}
 
-	err = loadtest.ExecuteStandalone(loadtest.Config{
+	cfg := loadtest.Config{
 		ClientFactory:        req.ClientFactory,
 		Connections:          int(req.ConnectionCount),
 		Time:                 int(req.Duration.GetSeconds()),
@@ -65,9 +68,14 @@ func (s *Server) RunLoadtest(ctx context.Context, req *loadtestpb.RunLoadtestReq
 		MaxEndpoints:         int(req.MaxEndpointCount),
 		MinConnectivity:      int(req.MinPeerConnectivityCount),
 		PeerConnectTimeout:   int(req.PeerConnectTimeout.GetSeconds()),
-		StatsOutputFile:      req.StatsOutputFilePath,
-		NoTrapInterrupts:     true,
-	})
+		StatsOutputFile:      statsOutputFilePath,
+		NoTrapInterrupts:     false,
+	}
+	if err := cfg.Validate(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid input: %v", err)
+	}
+
+	err = loadtest.ExecuteStandalone(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -141,11 +149,11 @@ func mapBroadcastTxMethod(m loadtestpb.RunLoadtestRequest_BroadcastTxMethod) (st
 func mapEndpointSelectMethod(m loadtestpb.RunLoadtestRequest_EndpointSelectMethod) (string, error) {
 	switch m {
 	case loadtestpb.RunLoadtestRequest_ENDPOINT_SELECT_METHOD_ANY:
-		return "async", nil
+		return "any", nil
 	case loadtestpb.RunLoadtestRequest_ENDPOINT_SELECT_METHOD_DISCOVERED:
-		return "sync", nil
+		return "discovered", nil
 	case loadtestpb.RunLoadtestRequest_ENDPOINT_SELECT_METHOD_SUPPLIED:
-		return "commit", nil
+		return "supplied", nil
 	}
 	return "", fmt.Errorf("unsupported endpoint_select_method: %v", m)
 }

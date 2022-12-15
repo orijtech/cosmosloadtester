@@ -7,6 +7,8 @@ import (
 	"io/fs"
 	"net"
 	"net/http"
+	"os"
+	"os/signal"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -101,7 +103,13 @@ func main() {
 		Handler: wrappedHandler,
 	}
 	logrus.Infof("Serving gRPC-Gateway on http://%s", gwServer.Addr)
-	logrus.Fatalln(gwServer.ListenAndServe())
+	go func() {
+		logrus.Fatalln(gwServer.ListenAndServe())
+	}()
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt)
+	<-sigCh
 }
 
 // Add logic to register your custom client factories to this function.
