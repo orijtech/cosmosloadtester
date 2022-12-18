@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -75,10 +76,18 @@ func (s *Server) RunLoadtest(ctx context.Context, req *loadtestpb.RunLoadtestReq
 		return nil, status.Errorf(codes.InvalidArgument, "invalid input: %v", err)
 	}
 
-	err = loadtest.ExecuteStandalone(cfg)
+	psL, err := loadtest.ExecuteStandaloneWithStats(cfg)
 	if err != nil {
 		return nil, err
 	}
+
+	// TODO: Send over the actual values of psL to the UI
+	// instead of the CSV parsing down below.
+	blob, err := json.MarshalIndent(psL, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	println(string(blob))
 
 	f, err := os.Open(statsOutputFilePath)
 	if err != nil {

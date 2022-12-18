@@ -9,7 +9,7 @@ require (
 	github.com/informalsystems/tm-load-test v1.0.0
 	github.com/lib/pq v1.10.6
 	github.com/sirupsen/logrus v1.9.0
-	go.opencensus.io v0.23.0
+	go.opencensus.io v0.24.0
 	google.golang.org/genproto v0.0.0-20221207170731-23e4bf6bdc37
 	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8
@@ -96,7 +96,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.13.0 // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
+	github.com/stretchr/testify v1.8.1 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
 	github.com/tendermint/btcd v0.1.1 // indirect
@@ -120,5 +120,7 @@ require (
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+
+replace github.com/informalsystems/tm-load-test => github.com/orijtech/tm-load-test v1.0.1-0.20221218204541-d37154798c88
 
 // replace github.com/informalsystems/tm-load-test => /home/nathan/Documents/tm-load-test
