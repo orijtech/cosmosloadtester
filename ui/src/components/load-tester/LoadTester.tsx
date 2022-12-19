@@ -3,19 +3,15 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
-
-import {
-    LoadtestServiceClient,
-} from 'src/gen/orijtech/cosmosloadtester/v1/Loadtest_serviceServiceClientPb';
-import {
-    RunLoadtestRequest,
-    RunLoadtestResponse,
-} from 'src/gen/orijtech/cosmosloadtester/v1/loadtest_service_pb';
-
 import * as timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
+
+import { LoadtestServiceClient } from 'src/gen/orijtech/cosmosloadtester/v1/Loadtest_serviceServiceClientPb';
+import { RunLoadtestRequest, RunLoadtestResponse } from 'src/gen/orijtech/cosmosloadtester/v1/loadtest_service_pb';
+import { Spinner } from 'src/components/Spinner';
 import Inputs from 'src/components/inputs/Inputs';
 import Outputs from 'src/components/output/Outputs';
+
 import { fields } from './Fields';
 
 const service = new LoadtestServiceClient('');
@@ -52,7 +48,11 @@ export default function LoadTester() {
                 .setTransactionSizeBytes(data.transactionSizeBytes)
                 .setTransactionsPerSecond(data.transactionsPerSecond)
                 .setConnectionCount(data.connectionCount);
+
+            await (new Promise((resolve) => setTimeout(resolve, 3000)));
+            
             const result = await service.runLoadtest(request, null);
+
             setData(result.toObject());
             console.log(result.toObject());
         } catch (e: any) {
@@ -64,42 +64,45 @@ export default function LoadTester() {
     };
 
     return (
-        <Paper elevation={0} sx={{ mt: 3, p: 3 }}>
-            <Alert severity='info' sx={{ mb: 3 }} variant='standard'>
-                <Typography variant="caption">
-                    Enter TM Parameters
-                </Typography>
-            </Alert>
-            <Inputs
-                handleFormSubmission={onFormSubmit}
-                fields={fields}
-                submitRef={submitRef}
-            />
-            <Button
-                disableElevation={true}
-                disabled={running}
-                color={running ? 'inherit' : 'info'}
-                sx={{ textTransform: 'none' }}
-                variant='contained'
-                onClick={() => submitRef.current?.click()}
-            >
-                {running ? 'Running load testing...' : 'Run load testing'}
-            </Button>
+        <>
+            <Spinner loading={running} />
+            <Paper elevation={0} sx={{ mt: 3, p: 3 }}>
+                <Alert severity='info' sx={{ mb: 3 }} variant='standard'>
+                    <Typography variant="caption">
+                        Enter TM Parameters
+                    </Typography>
+                </Alert>
+                <Inputs
+                    handleFormSubmission={onFormSubmit}
+                    fields={fields}
+                    submitRef={submitRef}
+                />
+                <Button
+                    disableElevation={true}
+                    disabled={running}
+                    color={running ? 'inherit' : 'info'}
+                    sx={{ textTransform: 'none' }}
+                    variant='contained'
+                    onClick={() => submitRef.current?.click()}
+                >
+                    {running ? 'Running load testing...' : 'Run load testing'}
+                </Button>
 
-            {/* display errors if any occured */}
-            {error !== '' && <Typography component='h6' variant='caption'>{error}</Typography>}
-            {/* render data if it exists */}
-            {
-                data !== undefined &&
-                <>
-                    <Alert severity='success' sx={{ my: 3 }}>
-                        <Typography variant='caption'>
-                            Load Testing Results
-                        </Typography>
-                    </Alert>
-                    <Outputs data={data} />
-                </>
-            }
-        </Paper>
+                {/* display errors if any occured */}
+                {error !== '' && <Typography component='h6' variant='caption'>{error}</Typography>}
+                {/* render data if it exists */}
+                {
+                    data !== undefined &&
+                    <>
+                        <Alert severity='success' sx={{ my: 3 }}>
+                            <Typography variant='caption'>
+                                Load Testing Results
+                            </Typography>
+                        </Alert>
+                        <Outputs data={data} />
+                    </>
+                }
+            </Paper>
+        </>
     );
 }
