@@ -4,6 +4,12 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import InputAdornment from '@mui/material/InputAdornment';
+import { InputProps } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Tooltip, { tooltipClasses, TooltipProps } from '@mui/material/Tooltip';
+import { grey } from '@mui/material/colors';
 
 export enum FieldType {
     VALUE_BASED = 'value-based-field',
@@ -30,6 +36,19 @@ interface Props {
     submitRef: React.Ref<HTMLButtonElement>;
 };
 
+
+const HTMLTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+))(( { theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: grey[100],
+        color: 'rgba(0, 0, 0, 0.80)',
+        maxWidth: 220,
+        fontSize: theme.typography.pxToRem(12),
+        border: '1px solid #dadde9' // an arbitrary color darker then bgcolor
+    }
+}));
+
 export default function Inputs(props: Props) {
     const {
         handleFormSubmission,
@@ -55,6 +74,30 @@ export default function Inputs(props: Props) {
         handleFormSubmission?.(data);
     };
 
+    const getEndInputProps = (fieldName: string = '', fieldInfo: string = ''): InputProps => {
+        return {
+            endAdornment: (
+                <InputAdornment position='end'>
+                    <HTMLTooltip
+                        placement='bottom-end'
+                        title={
+                            <>
+                                <Typography color='inherit' variant='body2' fontWeight='bold' gutterBottom>
+                                    {fieldName} &nbsp;
+                                </Typography>
+                                <Typography variant='caption'>
+                                    {fieldInfo}
+                                </Typography>
+                            </>
+                        }
+                    >
+                        <HelpOutlineIcon fontSize='small' />
+                    </HTMLTooltip>
+                </InputAdornment>
+            )
+        }
+    };
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -65,29 +108,33 @@ export default function Inputs(props: Props) {
                                 name={f.name}
                                 control={control}
                                 rules={{ required: f.required }}
-                                render={({ field, fieldState: { error } }) => { 
+                                render={({ field, fieldState: { error } }) => {
                                     if (f.fieldType === FieldType.TIME_BASED) {
                                         return (
                                             <TextField
+                                                fullWidth
                                                 variant='outlined'
                                                 label={f.label}
                                                 size='small'
                                                 type='number'
                                                 error={error !== undefined}
-                                                helperText={error !== undefined ? error.message : f.info}
+                                                InputProps={{ ...getEndInputProps(f.label, f.info) }}
+                                                helperText={error !== undefined ? error.message : ''}
                                                 {...field}
                                             />
                                         );
-                                    }                                   
+                                    }
                                     if (f.fieldType === FieldType.SINGLE_SELECTION_BASED) {
                                         return (
                                             <TextField
+                                                fullWidth
                                                 select={true}
                                                 variant='outlined'
                                                 label={f.label}
                                                 size='small'
                                                 error={error !== undefined}
-                                                helperText={error !== undefined ? error.message : f.info}
+                                                InputProps={{ ...getEndInputProps(f.label, f.info) }}
+                                                helperText={error !== undefined ? error.message : ''}
                                                 {...field}
                                             >
                                                 {f.options?.map((p) =>
@@ -102,11 +149,13 @@ export default function Inputs(props: Props) {
                                     }
                                     return (
                                         <TextField
+                                            fullWidth
                                             variant='outlined'
                                             label={f.label}
                                             size='small'
                                             error={error !== undefined}
-                                            helperText={error !== undefined ? error.message : f.info}
+                                            InputProps={{ ...getEndInputProps(f.label, f.info) }}
+                                            helperText={error !== undefined ? error.message : ''}
                                             {...field}
                                         />
                                     );
