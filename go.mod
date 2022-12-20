@@ -3,7 +3,7 @@ module github.com/orijtech/cosmosloadtester
 go 1.18
 
 require (
-	github.com/cosmos/cosmos-sdk v0.46.6
+	github.com/cosmos/cosmos-sdk v0.40.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.14.0
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/informalsystems/tm-load-test v1.0.0
@@ -35,7 +35,7 @@ require (
 	github.com/cosmos/cosmos-proto v1.0.0-alpha7 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
-	github.com/cosmos/iavl v0.19.4 // indirect
+	github.com/cosmos/iavl v0.19.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
@@ -112,6 +112,7 @@ require (
 	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/term v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

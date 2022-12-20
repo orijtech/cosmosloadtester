@@ -99,6 +99,67 @@
         }
       }
     },
+    "v1PerSecond": {
+      "type": "object",
+      "properties": {
+        "sec": {
+          "type": "string",
+          "format": "int64"
+        },
+        "qps": {
+          "type": "number",
+          "format": "double"
+        },
+        "bytes": {
+          "type": "number",
+          "format": "double"
+        },
+        "bytesRankings": {
+          "$ref": "#/definitions/v1Ranking"
+        },
+        "latencyRankings": {
+          "$ref": "#/definitions/v1Ranking"
+        }
+      }
+    },
+    "v1Percentile": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "latency": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string",
+          "format": "int64"
+        },
+        "atStr": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Ranking": {
+      "type": "object",
+      "properties": {
+        "p50": {
+          "$ref": "#/definitions/v1Percentile"
+        },
+        "p75": {
+          "$ref": "#/definitions/v1Percentile"
+        },
+        "p90": {
+          "$ref": "#/definitions/v1Percentile"
+        },
+        "p95": {
+          "$ref": "#/definitions/v1Percentile"
+        },
+        "p99": {
+          "$ref": "#/definitions/v1Percentile"
+        }
+      }
+    },
     "v1RunLoadtestRequest": {
       "type": "object",
       "properties": {
@@ -200,6 +261,12 @@
           "type": "number",
           "format": "double",
           "description": "The rate at which data was transmitted in transactions (bytes/sec).\nCorresponds to avg_data_rate in tm-load-test."
+        },
+        "perSec": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1PerSecond"
+          }
         }
       }
     }

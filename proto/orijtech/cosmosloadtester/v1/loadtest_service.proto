@@ -96,4 +96,29 @@ message RunLoadtestResponse {
   // The rate at which data was transmitted in transactions (bytes/sec).
   // Corresponds to avg_data_rate in tm-load-test.
   double avg_bytes_per_second = 5;
+
+  repeated PerSecond per_sec = 6;
+}
+
+message PerSecond {
+  int64 sec = 1;
+  double qps = 2;
+  double bytes = 3;
+  Ranking bytes_rankings = 4;
+  Ranking latency_rankings = 5;
+}
+
+message Percentile {
+  google.protobuf.Duration at = 1;
+  google.protobuf.Duration latency = 2;
+  int64 size = 3;
+  string at_str = 4;
+}
+
+message Ranking {
+  Percentile p50 = 1;
+  Percentile p75 = 2;
+  Percentile p90 = 3;
+  Percentile p95 = 4;
+  Percentile p99 = 5;
 }
