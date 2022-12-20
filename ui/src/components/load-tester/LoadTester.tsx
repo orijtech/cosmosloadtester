@@ -49,7 +49,9 @@ export default function LoadTester() {
                 .setTransactionsPerSecond(data.transactionsPerSecond)
                 .setConnectionCount(data.connectionCount);
 
+            // TODO: remove the next line that mocks a real fetch when testing is complete
             await (new Promise((resolve) => setTimeout(resolve, 3000)));
+            setData({} as RunLoadtestResponse.AsObject);
             
             const result = await service.runLoadtest(request, null);
 

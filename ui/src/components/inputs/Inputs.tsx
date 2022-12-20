@@ -74,7 +74,7 @@ export default function Inputs(props: Props) {
         handleFormSubmission?.(data);
     };
 
-    const getEndInputProps = (fieldName: string = '', fieldInfo: string = ''): InputProps => {
+    const getEndInputProps = (fieldLabel: string = '', fieldInfo: string = ''): InputProps => {
         return {
             endAdornment: (
                 <InputAdornment position='end'>
@@ -83,7 +83,7 @@ export default function Inputs(props: Props) {
                         title={
                             <>
                                 <Typography color='inherit' variant='body2' fontWeight='bold' gutterBottom>
-                                    {fieldName} &nbsp;
+                                    {fieldLabel} &nbsp;
                                 </Typography>
                                 <Typography variant='caption'>
                                     {fieldInfo}
