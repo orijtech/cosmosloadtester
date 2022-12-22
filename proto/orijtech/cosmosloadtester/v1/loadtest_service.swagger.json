@@ -104,39 +104,48 @@
       "properties": {
         "sec": {
           "type": "string",
-          "format": "int64"
+          "format": "int64",
+          "title": "Indicates the ordinal number of the current second e.g. for the 8th second, sec=7, 1st second, sec=0.\nSecond is creating by using the lower bounds/floor of the second e.g. values at:\n   0.74 sec fall within sec=0\n   9.94 sec fall within sec=9"
         },
         "qps": {
           "type": "number",
-          "format": "double"
+          "format": "double",
+          "description": "Indicates the queries per second captured by stuffing points within a second booundary."
         },
-        "bytes": {
+        "bytesSent": {
           "type": "number",
-          "format": "double"
+          "format": "double",
+          "description": "Bytes indicates the bytes sent within the time period."
         },
         "bytesRankings": {
-          "$ref": "#/definitions/v1Ranking"
+          "$ref": "#/definitions/v1Ranking",
+          "description": "Indicates the aggregated percentile values by bytes."
         },
         "latencyRankings": {
-          "$ref": "#/definitions/v1Ranking"
+          "$ref": "#/definitions/v1Ranking",
+          "description": "Indicates the aggregated percentile values by latency."
         }
       }
     },
     "v1Percentile": {
       "type": "object",
       "properties": {
-        "at": {
-          "type": "string"
+        "startOffset": {
+          "type": "string",
+          "description": "The time relative to the request's start time."
         },
         "latency": {
-          "type": "string"
-        },
-        "size": {
           "type": "string",
-          "format": "int64"
+          "description": "The time between request send and receipt of a response."
+        },
+        "bytesSent": {
+          "type": "string",
+          "format": "int64",
+          "description": "The number of bytes sent."
         },
         "atStr": {
-          "type": "string"
+          "type": "string",
+          "description": "The human friendly value of the percentile's occurence. It is useful for easy debugging."
         }
       }
     },
@@ -144,19 +153,24 @@
       "type": "object",
       "properties": {
         "p50": {
-          "$ref": "#/definitions/v1Percentile"
+          "$ref": "#/definitions/v1Percentile",
+          "description": "The 50th percentile value aka the median."
         },
         "p75": {
-          "$ref": "#/definitions/v1Percentile"
+          "$ref": "#/definitions/v1Percentile",
+          "description": "The 75th percentile value."
         },
         "p90": {
-          "$ref": "#/definitions/v1Percentile"
+          "$ref": "#/definitions/v1Percentile",
+          "description": "The 90th percentile value."
         },
         "p95": {
-          "$ref": "#/definitions/v1Percentile"
+          "$ref": "#/definitions/v1Percentile",
+          "description": "The 95th percentile value."
         },
         "p99": {
-          "$ref": "#/definitions/v1Percentile"
+          "$ref": "#/definitions/v1Percentile",
+          "description": "The 99th percentile value, useful to identify outliers."
         }
       }
     },
@@ -266,7 +280,8 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1PerSecond"
-          }
+          },
+          "description": "The respective points per second from 0 until the request's max_time."
         }
       }
     }
