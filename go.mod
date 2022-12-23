@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute/metadata v0.2.2 // indirect
+	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cosmossdk.io/errors v1.0.0-beta.7 // indirect
 	cosmossdk.io/math v1.0.0-beta.3 // indirect
 	filippo.io/edwards25519 v1.0.0-rc.1 // indirect
@@ -121,6 +121,4 @@ require (
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-replace github.com/informalsystems/tm-load-test => github.com/orijtech/tm-load-test v1.0.1-0.20221218204541-d37154798c88
-
-// replace github.com/informalsystems/tm-load-test => /home/nathan/Documents/tm-load-test
+replace github.com/informalsystems/tm-load-test => github.com/orijtech/tm-load-test v1.0.1-0.20221223210430-743a02407d52

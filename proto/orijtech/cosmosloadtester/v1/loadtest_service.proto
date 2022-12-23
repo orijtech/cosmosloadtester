@@ -96,4 +96,47 @@ message RunLoadtestResponse {
   // The rate at which data was transmitted in transactions (bytes/sec).
   // Corresponds to avg_data_rate in tm-load-test.
   double avg_bytes_per_second = 5;
+
+  // The respective points per second from 0 until the request's max_time.
+  repeated PerSecond per_sec = 6;
+}
+
+message PerSecond {
+  // Indicates the ordinal number of the current second e.g. for the 8th second, sec=7, 1st second, sec=0.
+  // Second is creating by using the lower bounds/floor of the second e.g. values at:
+  //    0.74 sec fall within sec=0
+  //    9.94 sec fall within sec=9
+  int64 sec = 1;
+  // Indicates the queries per second captured by stuffing points within a second booundary.
+  double qps = 2;
+  // Bytes indicates the bytes sent within the time period.
+  double bytes_sent = 3;
+  // Indicates the aggregated percentile values by bytes.
+  Ranking bytes_rankings = 4;
+  // Indicates the aggregated percentile values by latency.
+  Ranking latency_rankings = 5;
+}
+
+message Percentile {
+  // The time relative to the request's start time.
+  google.protobuf.Duration start_offset = 1;
+  // The time between request send and receipt of a response.
+  google.protobuf.Duration latency = 2;
+  // The number of bytes sent.
+  int64 bytes_sent = 3;
+  // The human friendly value of the percentile's occurence. It is useful for easy debugging.
+  string at_str = 4;
+}
+
+message Ranking {
+  // The 50th percentile value aka the median.
+  Percentile p50 = 1;
+  // The 75th percentile value.
+  Percentile p75 = 2;
+  // The 90th percentile value.
+  Percentile p90 = 3;
+  // The 95th percentile value.
+  Percentile p95 = 4;
+  // The 99th percentile value, useful to identify outliers.
+  Percentile p99 = 5;
 }

@@ -118,6 +118,11 @@ export class RunLoadtestResponse extends jspb.Message {
   getAvgBytesPerSecond(): number;
   setAvgBytesPerSecond(value: number): RunLoadtestResponse;
 
+  getPerSecList(): Array<PerSecond>;
+  setPerSecList(value: Array<PerSecond>): RunLoadtestResponse;
+  clearPerSecList(): RunLoadtestResponse;
+  addPerSec(value?: PerSecond, index?: number): PerSecond;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RunLoadtestResponse.AsObject;
   static toObject(includeInstance: boolean, msg: RunLoadtestResponse): RunLoadtestResponse.AsObject;
@@ -133,6 +138,123 @@ export namespace RunLoadtestResponse {
     totalBytes: number,
     avgTxsPerSecond: number,
     avgBytesPerSecond: number,
+    perSecList: Array<PerSecond.AsObject>,
+  }
+}
+
+export class PerSecond extends jspb.Message {
+  getSec(): number;
+  setSec(value: number): PerSecond;
+
+  getQps(): number;
+  setQps(value: number): PerSecond;
+
+  getBytesSent(): number;
+  setBytesSent(value: number): PerSecond;
+
+  getBytesRankings(): Ranking | undefined;
+  setBytesRankings(value?: Ranking): PerSecond;
+  hasBytesRankings(): boolean;
+  clearBytesRankings(): PerSecond;
+
+  getLatencyRankings(): Ranking | undefined;
+  setLatencyRankings(value?: Ranking): PerSecond;
+  hasLatencyRankings(): boolean;
+  clearLatencyRankings(): PerSecond;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PerSecond.AsObject;
+  static toObject(includeInstance: boolean, msg: PerSecond): PerSecond.AsObject;
+  static serializeBinaryToWriter(message: PerSecond, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PerSecond;
+  static deserializeBinaryFromReader(message: PerSecond, reader: jspb.BinaryReader): PerSecond;
+}
+
+export namespace PerSecond {
+  export type AsObject = {
+    sec: number,
+    qps: number,
+    bytesSent: number,
+    bytesRankings?: Ranking.AsObject,
+    latencyRankings?: Ranking.AsObject,
+  }
+}
+
+export class Percentile extends jspb.Message {
+  getStartOffset(): google_protobuf_duration_pb.Duration | undefined;
+  setStartOffset(value?: google_protobuf_duration_pb.Duration): Percentile;
+  hasStartOffset(): boolean;
+  clearStartOffset(): Percentile;
+
+  getLatency(): google_protobuf_duration_pb.Duration | undefined;
+  setLatency(value?: google_protobuf_duration_pb.Duration): Percentile;
+  hasLatency(): boolean;
+  clearLatency(): Percentile;
+
+  getBytesSent(): number;
+  setBytesSent(value: number): Percentile;
+
+  getAtStr(): string;
+  setAtStr(value: string): Percentile;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Percentile.AsObject;
+  static toObject(includeInstance: boolean, msg: Percentile): Percentile.AsObject;
+  static serializeBinaryToWriter(message: Percentile, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Percentile;
+  static deserializeBinaryFromReader(message: Percentile, reader: jspb.BinaryReader): Percentile;
+}
+
+export namespace Percentile {
+  export type AsObject = {
+    startOffset?: google_protobuf_duration_pb.Duration.AsObject,
+    latency?: google_protobuf_duration_pb.Duration.AsObject,
+    bytesSent: number,
+    atStr: string,
+  }
+}
+
+export class Ranking extends jspb.Message {
+  getP50(): Percentile | undefined;
+  setP50(value?: Percentile): Ranking;
+  hasP50(): boolean;
+  clearP50(): Ranking;
+
+  getP75(): Percentile | undefined;
+  setP75(value?: Percentile): Ranking;
+  hasP75(): boolean;
+  clearP75(): Ranking;
+
+  getP90(): Percentile | undefined;
+  setP90(value?: Percentile): Ranking;
+  hasP90(): boolean;
+  clearP90(): Ranking;
+
+  getP95(): Percentile | undefined;
+  setP95(value?: Percentile): Ranking;
+  hasP95(): boolean;
+  clearP95(): Ranking;
+
+  getP99(): Percentile | undefined;
+  setP99(value?: Percentile): Ranking;
+  hasP99(): boolean;
+  clearP99(): Ranking;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Ranking.AsObject;
+  static toObject(includeInstance: boolean, msg: Ranking): Ranking.AsObject;
+  static serializeBinaryToWriter(message: Ranking, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Ranking;
+  static deserializeBinaryFromReader(message: Ranking, reader: jspb.BinaryReader): Ranking;
+}
+
+export namespace Ranking {
+  export type AsObject = {
+    p50?: Percentile.AsObject,
+    p75?: Percentile.AsObject,
+    p90?: Percentile.AsObject,
+    p95?: Percentile.AsObject,
+    p99?: Percentile.AsObject,
   }
 }
 

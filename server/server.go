@@ -45,10 +45,10 @@ func (s *Server) RunLoadtest(ctx context.Context, req *loadtestpb.RunLoadtestReq
 		}
 		defer func() {
 			if err := tmpFile.Close(); err != nil {
-				logrus.WithError(err).Error("failed to close temporary stats output file at %s", tmpFile.Name)
+				logrus.WithError(err).Errorf("failed to close temporary stats output file at %s", tmpFile.Name())
 			}
 			if err := os.Remove(tmpFile.Name()); err != nil {
-				logrus.WithError(err).Error("failed to remove temporary stats output file at %s", tmpFile.Name)
+				logrus.WithError(err).Errorf("failed to remove temporary stats output file at %s", tmpFile.Name())
 			}
 		}()
 		statsOutputFilePath = tmpFile.Name()
@@ -140,7 +140,46 @@ func (s *Server) RunLoadtest(ctx context.Context, req *loadtestpb.RunLoadtestReq
 		}
 	}
 
+	// TODO: once the proto is updated to support multiple transactors, range over psL.
+	stats := psL[0]
+	for _, ps := range stats.PerSecond {
+		res.PerSec = append(res.PerSec, &loadtestpb.PerSecond{
+			Sec:             int64(ps.Sec),
+			Qps:             float64(ps.QPS),
+			BytesSent:       float64(ps.Bytes),
+			LatencyRankings: tmRankingToProtoRanking(ps, ps.LatencyRankings, true),
+			BytesRankings:   tmRankingToProtoRanking(ps, ps.BytesRankings, false),
+		})
+	}
+
 	return res, nil
+}
+
+// tmRankingToProtoRanking creates a loadtestpb ranking from the supplied buckets and ranking.
+// If latency = true, it will populate Latency in the percentiles. Otherwise, it will populate BytesSent.
+func tmRankingToProtoRanking(bucketized *loadtest.BucketizedBySecond, ranking *loadtest.ProcessedStats, latency bool) *loadtestpb.Ranking {
+	return &loadtestpb.Ranking{
+		P50: tmPercentileToProtoPercentile(bucketized, ranking.P50thLatency, latency),
+		P75: tmPercentileToProtoPercentile(bucketized, ranking.P75thLatency, latency),
+		P90: tmPercentileToProtoPercentile(bucketized, ranking.P90thLatency, latency),
+		P95: tmPercentileToProtoPercentile(bucketized, ranking.P95thLatency, latency),
+		P99: tmPercentileToProtoPercentile(bucketized, ranking.P99thLatency, latency),
+	}
+}
+
+// tmPercentileToProtoPercentile creates a loadtestpb percentile from the supplied buckets and percentile.
+// If latency = true, it will populate Latency in the percentiles. Otherwise, it will populate BytesSent.
+func tmPercentileToProtoPercentile(bucketized *loadtest.BucketizedBySecond, percentile *loadtest.DescPercentile, latency bool) *loadtestpb.Percentile {
+	ret := &loadtestpb.Percentile{
+		StartOffset: durationpb.New(time.Duration(bucketized.Sec) * time.Second),
+		AtStr:       percentile.AtStr,
+	}
+	if latency {
+		ret.Latency = durationpb.New(percentile.Latency)
+	} else {
+		ret.BytesSent = int64(percentile.Size)
+	}
+	return ret
 }
 
 func mapBroadcastTxMethod(m loadtestpb.RunLoadtestRequest_BroadcastTxMethod) (string, error) {
