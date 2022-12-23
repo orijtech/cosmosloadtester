@@ -175,9 +175,9 @@ func tmPercentileToProtoPercentile(bucketized *loadtest.BucketizedBySecond, perc
 		AtStr:       percentile.AtStr,
 	}
 	if latency {
-		ret.Latency = durationpb.New(bucketized.LatencyRankings.TotalTime)
+		ret.Latency = durationpb.New(percentile.Latency)
 	} else {
-		ret.BytesSent = int64(bucketized.BytesRankings.TotalBytes)
+		ret.BytesSent = int64(percentile.Size)
 	}
 	return ret
 }
