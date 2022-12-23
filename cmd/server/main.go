@@ -38,7 +38,7 @@ func main() {
 	defer cancel()
 
 	if err := registerClientFactories(); err != nil {
-		logrus.Fatalln("failed to register client factories: %v", err)
+		logrus.Fatalf("failed to register client factories: %v", err)
 	}
 
 	s := server.NewServer()

@@ -45,10 +45,10 @@ func (s *Server) RunLoadtest(ctx context.Context, req *loadtestpb.RunLoadtestReq
 		}
 		defer func() {
 			if err := tmpFile.Close(); err != nil {
-				logrus.WithError(err).Error("failed to close temporary stats output file at %s", tmpFile.Name)
+				logrus.WithError(err).Errorf("failed to close temporary stats output file at %s", tmpFile.Name())
 			}
 			if err := os.Remove(tmpFile.Name()); err != nil {
-				logrus.WithError(err).Error("failed to remove temporary stats output file at %s", tmpFile.Name)
+				logrus.WithError(err).Errorf("failed to remove temporary stats output file at %s", tmpFile.Name())
 			}
 		}()
 		statsOutputFilePath = tmpFile.Name()

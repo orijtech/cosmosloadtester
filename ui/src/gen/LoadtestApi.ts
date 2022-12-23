@@ -43,6 +43,69 @@ export interface RpcStatus {
   details?: ProtobufAny[];
 }
 
+export interface V1PerSecond {
+  /**
+   * Indicates the ordinal number of the current second e.g. for the 8th second, sec=7, 1st second, sec=0.
+   * Second is creating by using the lower bounds/floor of the second e.g. values at:
+   *    0.74 sec fall within sec=0
+   *    9.94 sec fall within sec=9
+   * @format int64
+   */
+  sec?: string;
+
+  /**
+   * Indicates the queries per second captured by stuffing points within a second booundary.
+   * @format double
+   */
+  qps?: number;
+
+  /**
+   * Bytes indicates the bytes sent within the time period.
+   * @format double
+   */
+  bytesSent?: number;
+
+  /** Indicates the aggregated percentile values by bytes. */
+  bytesRankings?: V1Ranking;
+
+  /** Indicates the aggregated percentile values by latency. */
+  latencyRankings?: V1Ranking;
+}
+
+export interface V1Percentile {
+  /** The time relative to the request's start time. */
+  startOffset?: string;
+
+  /** The time between request send and receipt of a response. */
+  latency?: string;
+
+  /**
+   * The number of bytes sent.
+   * @format int64
+   */
+  bytesSent?: string;
+
+  /** The human friendly value of the percentile's occurence. It is useful for easy debugging. */
+  atStr?: string;
+}
+
+export interface V1Ranking {
+  /** The 50th percentile value aka the median. */
+  p50?: V1Percentile;
+
+  /** The 75th percentile value. */
+  p75?: V1Percentile;
+
+  /** The 90th percentile value. */
+  p90?: V1Percentile;
+
+  /** The 95th percentile value. */
+  p95?: V1Percentile;
+
+  /** The 99th percentile value, useful to identify outliers. */
+  p99?: V1Percentile;
+}
+
 export interface V1RunLoadtestRequest {
   /**
    * The identifier of the client factory to use for generating load testing transactions.
@@ -176,6 +239,9 @@ export interface V1RunLoadtestResponse {
    * @format double
    */
   avgBytesPerSecond?: number;
+
+  /** The respective points per second from 0 until the request's max_time. */
+  perSec?: V1PerSecond[];
 }
 
 export type QueryParamsType = Record<string | number, any>;
