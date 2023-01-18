@@ -158,6 +158,9 @@ func (s *Server) RunLoadtest(ctx context.Context, req *loadtestpb.RunLoadtestReq
 // tmRankingToProtoRanking creates a loadtestpb ranking from the supplied buckets and ranking.
 // If latency = true, it will populate Latency in the percentiles. Otherwise, it will populate BytesSent.
 func tmRankingToProtoRanking(bucketized *loadtest.BucketizedBySecond, ranking *loadtest.ProcessedStats, latency bool) *loadtestpb.Ranking {
+	if ranking == nil {
+		return nil
+	}
 	return &loadtestpb.Ranking{
 		P50: tmPercentileToProtoPercentile(bucketized, ranking.P50thLatency, latency),
 		P75: tmPercentileToProtoPercentile(bucketized, ranking.P75thLatency, latency),
@@ -170,6 +173,9 @@ func tmRankingToProtoRanking(bucketized *loadtest.BucketizedBySecond, ranking *l
 // tmPercentileToProtoPercentile creates a loadtestpb percentile from the supplied buckets and percentile.
 // If latency = true, it will populate Latency in the percentiles. Otherwise, it will populate BytesSent.
 func tmPercentileToProtoPercentile(bucketized *loadtest.BucketizedBySecond, percentile *loadtest.DescPercentile, latency bool) *loadtestpb.Percentile {
+	if percentile == nil {
+		return nil
+	}
 	ret := &loadtestpb.Percentile{
 		StartOffset: durationpb.New(time.Duration(bucketized.Sec) * time.Second),
 		AtStr:       percentile.AtStr,
